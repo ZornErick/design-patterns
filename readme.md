@@ -1,0 +1,26 @@
+# Design Patterns
+
+## Abstract Factory
+### Objetivo
+Fornecer uma interface para criação de famílias de objetos relacionados ou dependentes sem especificar suas classes concretas.
+
+### Aplicabilidade
+Use o padrão Abstract Factory quando:
+* um sistema deve ser independente de como seus produtos são criados, compostos ou representados;
+* um sistema deve ser configurado como um produto de uma família de múltiplos produtos;
+* uma família de objetos-produto for projetada para ser usada em conjunto, e você necessita garantir esta restrição;
+* você quer fornecer uma biblioteca de classes de produtos e quer revelar somente suas interfaces, não suas implementações.
+
+### Consequências
+O padrão Abstract Factory tem os seguintes benefícios e desvantagens:
+1. Isola classes concretas. O padrão Abstract Factory ajuda a controlar as classes de objetos criadas por uma aplicação. Uma vez que a fábrica encapsula a responsabilidade e o processo de criar objetos-produto, isola os clientes das classes de implementação. Os clientes manipulam as instâncias através das suas interfaces abstratas. Nomes de classes-produto ficam isolados na implementação da fábrica concreta; eles não aparecem no código do cliente.
+2. Torna fácil a troca de famílias de produtos. A classe de uma fábrica concreta aparece apenas uma vez numa aplicação, quando é instanciada. Isso facilita mudar a fábrica concreta que uma aplicação usa. Ela pode usar diferentes configurações de produtos simplesmente trocando a fábrica concreta. Uma vez que a fábrica abstrata cria uma família completa de produtos, toda família de produtos muda de uma só vez.
+3. Promove a harmonia entre produtos. Quando objetos-produto numa família são projetados para trabalharem juntos, é importante que uma aplicação use objetos de uma família de cada vez. Abstract Factory facilita assegurar isso.
+4. É difícil de suportar novos tipos de produtos. Estender fábricas abstratas para produzir novos tipos de Produtos não é fácil. Isso se deve ao fato de que a interface de Abstract Factory fixa o conjunto de produtos que podem ser criados. Suportar novos tipos de produto exige estender a interface da fábrica, o que envolve mudar a classe Abstract Factory e todas as suas subclasses.
+
+### Implementação
+A seguir, algumas técnicas úteis para implementar o padrão Abstract Factory.
+1. Fábricas como singletons. Uma aplicação necessita somente de uma instância de uma Concrete Factory por família de produto. Assim, ela é normalmente melhor implementada como um Singleton.
+2. Criando os produtos. Abstract Factory somente declara uma interface para criação de produtos. Fica a cargo das subclasses de Concrete Products criá-lo efetivamente. A maneira mais comum de fazer isso é definir um método-fábrica (Factory Method) para cada produto. Uma fábrica concreta especificará seus produtos redefinindo (overriding) o método fábrica para cada um. Embora esta implementação seja simples, exige uma nova subclasse de uma fábrica concreta para cada família de produtos, ainda que as famílias de produto tenham somente diferenças pequenas.\
+Se muitas famílias de produtos são possíveis, a fábrica concreta pode ser implementada usando o padrão Prototype. A fábrica concreta é iniciada com uma instância prototípica de cada produto da família e cria um novo produto clonando o seu protótipo. A abordagem baseada no Prototype elimina a necessidade de uma nova classe de fábrica concreta para cada nova família de produtos.
+3. Definindo fábricas extensíveis. Abstract Factory normalmente define uma operação diferente para cada tipo de produto que pode produzir. Os tipos de produtos estão codificados nas assinaturas das operações. O acréscimo de um novo tipo de produto exige a mudança da interface de Abstract Factory e de todas as classes que dependem dela. Um projeto mais flexível, mas menos segura, é acrescentar um parâmetro às operações que criam objetos. Este parâmetro especifica o tipo de objeto a ser criado. Ele poderia ser um identificador de classe, um inteiro, uma string ou qualquer outra coisa que identifica o tipo de produto. Com esta abordagem, Abstract Factory, somente necessita uma única operação "Make" com um parâmetro indicando o tipo de objeto a ser criado. Está é a técnica usada em Prototype e nas fábricas abstratas baseadas em classe. Você pode usá-la em linguagens com tipo estaticamente definidos somente quando todos os objetos têm a mesma classe abstrata de base ou quando os objetos-produto podem ser seguramente forçados a serem do tipo correto pelo cliente que os solicitou. Mas mesmo quando não é necessário forçar o tipo correto, permanece um problema inerente: todos os produtos são retornados ao cliente com a mesma interface abstrata, conforme especificado pelo tipo de retorno. O cliente não será capaz de diferenciar ou fazer hipóteses seguras sobre a classe de um produto. Se os clientes necessitam executar operações específicas às subclasses, elas não serão acessíveis através da interface abstrata. Embora o cliente possa executar um *downcast*, isso não é sempre viável ou segura, já que o *downcast* pode falhar. É o clássico compromisso para se obter uma interface altamente flexível e extensível.
