@@ -297,3 +297,25 @@ O padrão Proxy pode aproveitar das seguintes características de uma linguagem:
 1. Sobrecarregando o operador de acesso a membros em C++. C++ suporta a sobrecarga do operador `->`, o operador para acesso a membros. Sobrecarregar este operador permite executar processamento adicional quando um objeto é desreferenciado.
 2. Utilização de doesNotUnderstand em Smalltalk. Smalltalk fornece um gancho que pode ser usado para suportar a representação automática de mensagens. Quando um cliente envia uma mensagem a um receptor que não tem nenhum método correspondente, o método `doesNotUnderstand: aMessage` é chamado.
 3. Proxy não funciona sempre identicamente a uma referência real. Você precisa estar consciente de que a semântica de uma referência através de um proxy difere algumas vezes da semântica de uma referência regular.
+
+## Chain of Responsibility
+### Objetivo
+Evitar o acoplamento entre o remetente de uma solicitação e seu destinatário, dando oportunidade a mais de um objeto de tratar a solicitação. Encadear os objetos receptores e passar a solicitação ao longo da cadeia até que um objeto a trate.
+
+### Aplicabilidade
+Use o padrão Chain of Responsibility quando:
+* mais de um objeto puder tratar uma solicitação e o objeto que efetivamente irá tratá-la não for conhecido a priori. O objeto deveria ser averiguado automaticamente;
+* você quiser emitir uma solicitação para um dentre vários objetos sem especificar explicitamente o receptor;
+* o conjunto de objetos que pode tratar uma solicitação tiver de ser definido dinamicamente.
+
+### Consequências
+A Chain of Responsibility tem os seguintes benefícios e desvantagens:
+1. Reduz o acoplamento. O padrão libera um objeto de ter que conhecer qual outro objeto trata uma solicitação. Um objeto somente tem que saber que sua solicitação será tratada "apropriadamente". Tanto o receptor como o remetente, não têm conhecimento explícito um do outro, e um objeto da cadeia não tem que conhecer a estrutura da mesma. Assim, Chain of Responsibility pode simplificar interconexões entre objetos. Em vez de objetos manterem referências para todos os outros candidatos a receptores, eles mantêm uma única referência para o seu sucessor.
+2. Adiciona flexibilidade na atribuição de responsabilidades a objetos. A Chain of Responsibility lhe dá flexibilidade adicional na distribuição de responsabilidades entre objetos. Você pode acrescentar ou alterar responsabilidades pelo tratamento de uma solicitação através do acréscimo de objetos ou pela mudança da cadeia em tempo de execução. Você pode combinar isso com a criação de subclasses para especializar estaticamente os tratadores.
+3. Recebimento não garantido. Uma vez que uma solicitação não tem um receptor explícito, não há garantia de que ela será tratada — a solicitação pode cair fora do final da cadeia sem nem mesmo ter sido tratada. Uma solicitação também pode não ser tratada quando a cadeia não está configurada apropriadamente.
+
+### Implementação
+Aqui estão tópicos de implementação a serem considerados na utilização de Chain of Responsibility:
+1. Implementando a cadeia de sucessores. Existem duas maneiras possíveis de se implementar a cadeia de sucessores: (a) Definir novas referências (em Handler ou nas classes ConcreteHandlers); (b) Utilizar referências existentes. Definir novas referências dá maior flexibilidade, mas frequentemente os objetos receptores já estão "linkados" para suportar a cadeia, o que reduz a necessidade de definir referências explícitas.
+2. Conectando sucessores. Se não existem referências preexistentes para definir uma cadeia, então você terá que introduzi-las. Nesse caso, a classe Handler não somente define a interface para as solicitações, mas geralmente mantém o sucessor também. Isso permite que o handler forneça uma implementação default de HandleRequest: ele repassa a solicitação para o sucessor (caso exista). Se um ConcreteHandler subclasse não está interessado na solicitação, não tem que redefinir a operação para repassar, uma vez que a sua implementação default a repassará incondicionalmente.
+3. Representando solicitações. Diferentes opções estão disponíveis para representar solicitações. Em sua forma mais simples, a solicitação é uma operação codificada (hard-coded), como no exemplo de tratamento de help. Isto é conveniente e seguro, mas você só pode repassar o conjunto fixo de solicitações que a classe Handler define. Uma alternativa é utilizar um único objeto Request de tipo único que reúne todos os parâmetros da solicitação. Esta abordagem é mais flexível mas perde verificação estática de tipo.
