@@ -417,3 +417,25 @@ O padrão Mediator tem os seguintes benefícios e desvantagens:
 Os seguintes tópicos são relevantes para a implementação do padrão Mediator:
 1. Omitindo a classe abstrata Mediator. Não há necessidade de definir uma classe abstrata Mediator quando os colegas trabalham com somente um mediator. O acoplamento abstrato fornecido pela classe Mediator permite a colegas trabalhar com diferentes subclasses Mediator e vice-versa.
 2. Comunicação Colleague-Mediator. Os colegas têm que se comunicar com seu mediator quando ocorre um evento de interesse. Uma abordagem é implementar o Mediator como um Observer usando o padrão Observer. Os objetos Colleague atuam como Subjects, enviando notificações para o mediator sempre que mudam. O mediator responde propagando os efeitos da mudança para os outros colegas. Outra abordagem define no Mediator uma interface notificadora especializada que permite aos colegas se comunicarem mais diretamente.
+
+## Memento
+### Objetivo
+Sem violar o encapsulamento, capturar e externalizar um estado interno de um objeto, de modo que o mesmo possa posteriormente ser restaurado para esse estado.
+
+### Aplicabilidade
+Use o padrão Memento quando:
+* um instantâneo (parcial ou total) do estado de um objeto deve ser salvo de tal forma que possa ser restaurado posteriormente para esse estado, e
+* uma interface direta para a obtenção do estado iria expor detalhes da implementação e quebrar o encapsulamento do objeto.
+
+### Consequências
+O Memento tem várias consequências:
+1. Preserva fronteiras do encapsulamento. O Memento evita a exposição de informação que somente um originador deveria gerenciar, mas que mesmo assim deve ser armazenada fora do originador. O padrão isola dos outros objetos as informações que somente o originador devia conhecer.
+2. Simplifica o originador. Em outras codificações que tendem a preservar o encapsulamento, o originador mantém o registro dos clientes que solicitam o estado interno. Isto coloca toda a responsabilidade do gerenciamento de armazenamento sobre o originador. Ter os clientes gerenciando o estado que solicitam simplificaria o originador e manteria os clientes desinformados sobre quando restaurar o estado.
+3. A utilização de mementos pode ser custosa. Mementos podem incorrer em custos consideráveis, se o originador tem que copiar grandes quantidades de informação para armazenar no memento, ou se os clientes criam e devolvem mementos para o originador com frequência suficiente. A não ser que o encapsulamento ou armazenamento do estado do originador imponha custos não razoáveis, o padrão pode não ser apropriado.
+4. Definindo interfaces estreitas e largas. Pode ser difícil em algumas linguagens assegurar que somente o originador possa acessar o estado do memento.
+5. Custos ocultos no cuidado dos mementos. O caretaker é responsável pela exclusão dos mementos sob seu cuidado. Contudo, ele não tem nenhuma ideia sobre quanto estado tem em um memento. Daí, um caretaker normalmente leve, pode ter custos de armazenamento substanciais quando armazena mementos.
+
+### Implementação
+Aqui estão dois tópicos a ser considerados quando se implementa o padrão Memento:
+1. Interfaces para gerenciamento de informação. Em uma linguagem como Smalltalk que não suporta diferentes níveis de acesso para classes diferentes, há que se contar com uma convenção para preservar o encapsulamento. Os mementos podem oferecer duas interfaces: uma estreita para os caretakers e uma larga para os originadores. Idealmente, o caretaker deveria ter acesso somente às operações no memento que permitem mantê-lo (por exemplo, ler e gravar). Por outro lado, o originador deveria ter acesso a uma interface larga que lhe permite acessar todas as operações necessárias para restaurar seu estado anterior.
+2. Armazenando incrementos de mudanças. Quando os mementos são criados e passados de volta para seus originadores em uma sequência previsível, então o memento pode armazenar somente a mudança incremental no estado interno do originador. Por exemplo, comandos desfazíveis em uma lista do histórico podem usar mementos para garantir que os comandos são restaurados ao seu estado exato quando são desfeitos. A lista do histórico é definida em uma sequência específica para que os comandos só possam ter seu efeito desfeito ou refeito naquela sequência.
