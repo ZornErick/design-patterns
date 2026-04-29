@@ -246,3 +246,27 @@ O padrão Facade oferece os seguintes benefícios:
 Considere os seguintes tópicos ao implementar uma fachada:
 1. Reduzindo o acoplamento cliente-subsistema. O acoplamento entre clientes e o subsistema pode ser reduzido ainda mais, fazendo da Facade uma classe abstrata com subclasses concretas para diferentes implementações de um subsistema. Os clientes, então, podem se comunicar com o subsistema através da interface da classe abstrata Facade. Essa abstração impede que os clientes saibam qual implementação de um subsistema é utilizada. Uma alternativa para subclasses é configurar um objeto Facade com diferentes objetos do subsistema. Para personalizar a fachada, simplesmente substitua um ou mais dos seus objetos do subsistema.
 2. Classes do subsistema públicas versus privadas. Um subsistema é análogo a uma classe pelo fato de ambos terem interfaces, ambos encapsularem alguma coisa - uma classe encapsula o estado e as operações, enquanto que um subsistema encapsula classes. E, da mesma forma que é útil pensar nas interfaces públicas e privadas de uma classe, também é útil pensar nas interfaces públicas e privadas de um subsistema. A interface pública para um subsistema consiste de classes às quais todos os clientes têm acesso; a interface privada está restrita a apenas as extensões dos próprios subsistemas. A classe Facade é parte da interface pública, naturalmente, mas não é a única parte. Outras classes do subsistema podem ser públicas também.
+
+## Flyweight
+### Objetivo
+Usar compartilhamento para suportar grandes quantidades de objetos de granularidade fina, de maneira eficiente.
+
+### Aplicabilidade
+A eficácia do padrão Flyweight depende fortemente de como e onde ele é usado. Aplique o padrão Flyweight quando todas as condições a seguir forem verdadeiras:
+* uma aplicação utiliza uma grande quantidade de objetos;
+* os custos de armazenamento são altos por causa da grande quantidade de objetos;
+* a maioria do estado do objeto pode se tornar externo;
+* muitos objetos podem ser substituídos por relativamente poucos objetos compartilhados, uma vez removido o estado externo;
+* a aplicação não depende da identidade do objeto. Como objetos flyweight podem ser compartilhados, os testes de identidade retornarão verdadeiro para objetos conceitualmente distintos.
+
+### Consequências
+Os flyweights podem introduzir custos de tempo de execução associados à transferência, busca e/ou cálculo do estado externo, especialmente se ele havia sido previamente armazenado como um estado interno. Contudo, esses custos são compensados por economias no espaço, que aumentam à medida que mais flyweights são compartilhados. As economias de armazenamento são uma função de vários fatores:
+* a redução no número total de instâncias que vem do compartilhamento;
+* a quantidade de estado intrínseco por objeto;
+* se o estado extrínseco é computado ou armazenado.
+Quanto mais flyweights são compartilhados, maiores serão as economias. As economias aumentam com a quantidade de estado compartilhado. Maiores economias ocorrem quando os objetos usam quantidades substanciais de ambos estados, intrínseco e extrínseco, e o estado extrínseco pode ser computado em vez de ser armazenado. Então, você economiza no armazenamento de duas maneiras: o compartilhamento reduz o custo do estado intrínseco, e você troca o estado extrínseco por tempo de computação. O padrão Flyweight é frequentemente combinado com o padrão Composite para representar uma estrutura hierárquica como um grafo com nós-folhas compartilhados. Uma consequência do compartilhamento é que as operações de flyweight nas folhas não podem armazenar o estado dos seus pais. Portanto, esse estado é passado a elas como parte do contexto.
+
+### Implementação
+Considere os seguintes tópicos ao implementar o padrão Flyweight:
+1. Removendo o estado extrínseco. A aplicabilidade do padrão é determinada em grande parte pela facilidade com que se identifica o estado extrínseco e o remove dos objetos compartilhados. A remoção do estado extrínseco não ajudará a reduzir custos de armazenamento se houver tantas variedades distintas de estado extrínseco quanto existem objetos antes do compartilhamento. O melhor caso ocorre quando o estado extrínseco pode ser computado a partir de uma estrutura de objeto separada que tenha menores requisitos de armazenamento.
+2. Gerenciando objetos compartilhados. Como os objetos são compartilhados, os clientes não devem instanciá-los diretamente. FlyweightFactory permite que os clientes localizem um flyweight específico. Os objetos FlyweightFactory frequentemente baseiam-se em uma memória associativa para permitir aos clientes pesquisar flyweights de seu interesse. A capacidade de compartilhamento também implica em alguma forma de coleta de lixo de referências, ou pelo menos contagem das mesmas para determinar quando um flyweight não é mais necessário. Contudo, nenhuma das duas é necessária se o número de flyweights é fixo e pequeno (por exemplo, flyweights para o conjunto de caracteres ASCII). Nesse caso, vale a pena manter os flyweights em memória somente após eles serem criados.
