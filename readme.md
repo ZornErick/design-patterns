@@ -394,3 +394,26 @@ Iterator tem muitas variantes e alternativas de implementação. Algumas são li
 6. Iteradores podem ter acesso privilegiado. Um iterador pode ser visto como uma extensão do agregado que o criou. O iterador e o agregado estão fortemente acoplados. Frequentemente um iterador necessita acessar a representação interna do agregado para fazer o percurso eficientemente.
 7. Iteradores para compostos. Iteradores externos podem ser difíceis de implementar sobre estruturas agregadas recursivas como aquelas do padrão Composite, porque uma posição na estrutura pode envolver muitos níveis de aninhamento de agregados. Daí um iterador externo ter que armazenar um caminho através do Composite para manter o registro do objeto corrente. Algumas vezes é mais fácil usar simplesmente um iterador interno. Ele pode registrar a posição corrente simplesmente chamando-se recursivamente sobre a estrutura, escondendo o caminho na pilha de chamadas implicitamente.
 8. Iteradores nulos. Um NullIterator é um iterador degenerado que é útil para tratar condições de fronteira. Por definição, um NullIterator está sempre acabado o percurso; ou seja, sua operação IsDone sempre retorna true.
+
+## Mediator
+### Objetivo
+Definir um objeto que encapsula a forma como um conjunto de objetos interage. Mediator promove o acoplamento fraco ao evitar que os objetos se refiram explicitamente uns aos outros, permitindo variar suas interações independentemente.
+
+### Aplicabilidade
+Use o padrão Mediator quando:
+* um conjunto de objetos se comunica de formas bem definidas, porém complexas. As interdependências resultantes não são estruturadas e são difíceis de compreender;
+* a reutilização de um objeto for difícil porque ele referencia muitos outros e se comunica com eles;
+* um comportamento que está distribuído entre várias classes deve ser personalizável sem excessivas subclasses.
+
+### Consequências
+O padrão Mediator tem os seguintes benefícios e desvantagens:
+1. Limita as subclasses. Um mediator localiza um comportamento que de outra forma estaria distribuído entre vários objetos. Mudar esse comportamento exige somente a criação de subclasses de Mediator; as classes Colleague podem ser reutilizadas como estão.
+2. Desacopla colegas. Um mediador promove o acoplamento fraco entre colegas. Você pode variar e reutilizar classes Colleague e Mediator independentemente.
+3. Simplifica os protocolos do objeto. Um mediator substitui interações muitos-para-muitos por interações um-para-muitos entre o mediator e seus colegas. As relações um-para-muitos são mais fáceis de entender, manter e estender.
+4. Abstrai como os objetos cooperam. Tornar a mediação um conceito independente e encapsulá-lo em um objeto permite focar na forma como os objetos interagem, separadamente do seu comportamento individual. Isso pode ajudar a esclarecer como os objetos interagem em um sistema.
+5. Centraliza o controle. O padrão Mediator troca complexidade de interação por complexidade no mediator. Visto que o mediator encapsula os protocolos, ele pode tornar-se mais complexo do que qualquer colega individual. Isso pode tornar o próprio mediator um monolito difícil de manter.
+
+### Implementação
+Os seguintes tópicos são relevantes para a implementação do padrão Mediator:
+1. Omitindo a classe abstrata Mediator. Não há necessidade de definir uma classe abstrata Mediator quando os colegas trabalham com somente um mediator. O acoplamento abstrato fornecido pela classe Mediator permite a colegas trabalhar com diferentes subclasses Mediator e vice-versa.
+2. Comunicação Colleague-Mediator. Os colegas têm que se comunicar com seu mediator quando ocorre um evento de interesse. Uma abordagem é implementar o Mediator como um Observer usando o padrão Observer. Os objetos Colleague atuam como Subjects, enviando notificações para o mediator sempre que mudam. O mediator responde propagando os efeitos da mudança para os outros colegas. Outra abordagem define no Mediator uma interface notificadora especializada que permite aos colegas se comunicarem mais diretamente.
