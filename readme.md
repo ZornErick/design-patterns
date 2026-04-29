@@ -270,3 +270,30 @@ Quanto mais flyweights são compartilhados, maiores serão as economias. As econ
 Considere os seguintes tópicos ao implementar o padrão Flyweight:
 1. Removendo o estado extrínseco. A aplicabilidade do padrão é determinada em grande parte pela facilidade com que se identifica o estado extrínseco e o remove dos objetos compartilhados. A remoção do estado extrínseco não ajudará a reduzir custos de armazenamento se houver tantas variedades distintas de estado extrínseco quanto existem objetos antes do compartilhamento. O melhor caso ocorre quando o estado extrínseco pode ser computado a partir de uma estrutura de objeto separada que tenha menores requisitos de armazenamento.
 2. Gerenciando objetos compartilhados. Como os objetos são compartilhados, os clientes não devem instanciá-los diretamente. FlyweightFactory permite que os clientes localizem um flyweight específico. Os objetos FlyweightFactory frequentemente baseiam-se em uma memória associativa para permitir aos clientes pesquisar flyweights de seu interesse. A capacidade de compartilhamento também implica em alguma forma de coleta de lixo de referências, ou pelo menos contagem das mesmas para determinar quando um flyweight não é mais necessário. Contudo, nenhuma das duas é necessária se o número de flyweights é fixo e pequeno (por exemplo, flyweights para o conjunto de caracteres ASCII). Nesse caso, vale a pena manter os flyweights em memória somente após eles serem criados.
+
+## Proxy
+### Objetivo
+Fornecer um objeto representante (surrogate), ou um marcador (placeholder) de outro objeto para controlar o acesso ao mesmo.
+
+### Aplicabilidade
+O padrão Proxy é aplicável sempre que houver a necessidade de uma referência mais versátil ou sofisticada para um objeto do que um simples ponteiro. Aqui estão diversas situações comuns nas quais o padrão Proxy é aplicável:
+1. Um remote proxy fornece um representante local para um objeto em um espaço de endereçamento diferente.
+2. Um virtual proxy cria objetos pesados sob demanda. O ImageProxy descrito na seção Motivação é um exemplo desse tipo de proxy.
+3. Um protection proxy controla o acesso ao objeto original. Os proxies de proteção são úteis quando os objetos devem ter direitos de acesso diferenciados.
+4. Uma referência inteligente é um substituto para um simples ponteiro que executa ações adicionais quando um objeto é acessado. Os usos típicos incluem:
+   * contagem do número de referências ao objeto real, de tal forma que ele possa ser liberado automaticamente quando não houver mais referências (também chamado de smart pointers);
+   * carregamento de um objeto persistente para a memória quando ele é referenciado pela primeira vez;
+   * verificação de se o objeto real está bloqueado antes que seja acessado, para garantir que nenhum outro objeto possa alterá-lo.
+
+### Consequências
+O padrão Proxy introduz um nível de indireção quando há necessidade de acessar um objeto. A indireção adicional tem muitos usos, dependendo do tipo de proxy:
+1. Um remote proxy pode ocultar o fato de que um objeto reside em um espaço de endereçamento diferente.
+2. Um virtual proxy pode executar otimizações tais como criar um objeto sob demanda.
+3. Tanto protection proxies como referências inteligentes permitem a execução de tarefas adicionais de gerenciamento quando um objeto é acessado.
+Há também outra otimização que o padrão Proxy pode ocultar do cliente. Ela é chamada de copy-on-write, e está relacionada à criação sob demanda. Copiar um objeto grande e complicado pode ser uma operação cara. Se a cópia nunca é modificada, então não há necessidade de pagar este custo. Adiando o processo de cópia através do uso de um proxy, asseguramos que pagaremos o preço da cópia somente se o objeto é modificado.
+
+### Implementação
+O padrão Proxy pode aproveitar das seguintes características de uma linguagem:
+1. Sobrecarregando o operador de acesso a membros em C++. C++ suporta a sobrecarga do operador `->`, o operador para acesso a membros. Sobrecarregar este operador permite executar processamento adicional quando um objeto é desreferenciado.
+2. Utilização de doesNotUnderstand em Smalltalk. Smalltalk fornece um gancho que pode ser usado para suportar a representação automática de mensagens. Quando um cliente envia uma mensagem a um receptor que não tem nenhum método correspondente, o método `doesNotUnderstand: aMessage` é chamado.
+3. Proxy não funciona sempre identicamente a uma referência real. Você precisa estar consciente de que a semântica de uma referência através de um proxy difere algumas vezes da semântica de uma referência regular.
