@@ -489,3 +489,30 @@ O padrão State levanta uma série de tópicos a serem considerados na implement
 2. Uma classe-base baseada em tabelas. Existem outras formas de implementar máquinas de estado. Por exemplo, é comum o uso de tabelas para mapear inputs em transições de estado. Para cada estado, uma tabela mapeia toda entrada possível para um estado sucessor. De fato, esta abordagem converte o código condicional em uma pesquisa em tabela.
 3. Criando e destruindo objetos State. Uma escolha de implementação comum sobre a qual o padrão não impõe regras é (1) criar objetos State somente quando eles são necessários e destruí-los logo após, ou (2) criá-los antecipadamente e nunca destruí-los. A primeira opção é preferível quando os estados que serão escolhidos em tempo de execução não forem conhecidos e os contextos mudam de estado com pouca frequência. Esta abordagem evita a criação de objetos que não serão usados, o que é importante se os objetos State armazenam muita informação. A segunda opção é melhor quando as mudanças de estado ocorrem rapidamente. Nesse caso, você quer evitar a destruição de estados, pois eles podem ser necessários novamente em breve. Os custos de instanciação são pagos uma vez no início, e não há custos de destruição.
 4. Utilizando heranças dinâmica. Mudar o comportamento de uma solicitação particular pode ser conseguido pela mudança da classe do objeto em tempo de execução, mas isto não é possível na maioria das linguagens orientadas a objetos.
+
+## Strategy
+### Objetivo
+Definir uma família de algoritmos, encapsular cada um deles e torná-los intercambiáveis. Strategy permite que o algoritmo varie independentemente dos clientes que o utilizam.
+
+### Aplicabilidade
+Use o padrão Strategy quando:
+* muitas classes relacionadas diferem somente no seu comportamento. Strategies fornecem uma maneira de configurar uma classe com um dentre muitos comportamentos;
+* você necessita de variantes de um algoritmo. Por exemplo, você poderia definir algoritmos refletindo diferentes compromissos espaço/tempo. Strategies podem ser usadas quando essas variantes são implementadas como uma hierarquia de classes de algoritmos;
+* um algoritmo utiliza dados que os clientes não devem conhecer. Use o padrão Strategy para evitar a exposição de estruturas de dados específicas, complexas;
+* uma classe define muitos comportamentos, e estes aparecem como múltiplas declarações condicionais nas operações. Em vez de muitas condicionais, mova ramos condicionais relacionados para suas próprias classes Strategy.
+
+### Consequências
+O padrão Strategy tem os seguintes benefícios e desvantagens:
+1. Famílias de algoritmos relacionados. As hierarquias de classes Strategy definem uma família de algoritmos ou comportamentos para Contexts reutilizar. Herança pode ajudar a tirar proveito da funcionalidade comum dos algoritmos.
+2. Uma alternativa para a criação de subclasses. Herança oferece outra maneira de suportar uma variedade de algoritmos ou comportamentos. Você pode subclasse uma classe Context diretamente para lhe dar diferentes comportamentos. Mas isso engessa o comportamento dentro de Context. Mistura a implementação do algoritmo com a do Context, tornando-o mais difícil de entender, manter e estender.
+3. As estratégias eliminam comandos condicionais. O padrão Strategy oferece uma alternativa às declarações condicionais para selecionar comportamento desejado. Quando comportamentos diferentes são empacotados em uma única classe, é difícil evitar a utilização de declarações condicionais.
+4. Uma escolha de implementações. Strategies podem fornecer implementações diferentes do mesmo comportamento. O cliente pode escolher entre estratégias com diferentes compromissos de tempo e espaço.
+5. Os clientes devem estar cientes das diferentes estratégias. O padrão tem uma desvantagem em potencial, pois um cliente deve compreender como Strategies diferem antes que possa selecionar a apropriada. Os clientes podem ficar expostos a tópicos de implementação.
+6. Sobrecarga de comunicação entre Strategy e Context. A interface Strategy é compartilhada por todas as classes ConcreteStrategy, sejam os algoritmos que implementam triviais ou complexos. Por isso, é provável que algumas ConcreteStrategies não usarão toda a informação que lhes é passada por meio dessa interface; ConcreteStrategies simples podem não usar nenhuma daquelas informações.
+7. Aumento no número de objetos. Strategies aumentam o número de objetos em uma aplicação. Algumas vezes você pode reduzir essa carga implementando Strategies como objetos sem estado que os contextos podem compartilhar.
+
+### Implementação
+Considere os seguintes tópicos de implementação:
+1. Definindo as interfaces Strategy e Context. As interfaces Strategy e Context devem dar a uma ConcreteStrategy acesso eficiente a quaisquer dados que necessitar de um Context, e vice-versa. Uma abordagem é fazer com que Context passe os dados em parâmetros para as operações de Strategy. Outra técnica tem um Context se passando como argumento, e a Strategy solicitando dados explicitamente do Context. Alternativamente, Strategy poderia armazenar uma referência para seu Context, eliminando a necessidade de passá-la totalmente.
+2. Estratégias como parâmetros template. Em C++, os templates podem ser usados para configurar uma classe com uma estratégia. Esta técnica somente é aplicável se (1) Strategy puder ser selecionada em tempo de compilação, e (2) ela não precisa ser mudada em tempo de execução. Nesse caso, a classe a ser configurada (por exemplo, Context) é definida como uma classe template que tem uma classe Strategy como parâmetro.
+3. Tornando objetos Strategy opcionais. A classe Context pode ser simplificada, se for significativo não ter um objeto Strategy. Context verifica para ver se ele tem um objeto Strategy antes de acessá-lo. Se houver, então Context o utiliza normalmente. Se não houver nenhuma estratégia, então Context faz o comportamento default. O benefício desta abordagem é que os clientes não têm que lidar com objetos Strategy de modo algum, a não ser que não queiram o comportamento default.
